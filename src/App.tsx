@@ -100,6 +100,7 @@ export default function App() {
           city: city,
           lat: coords?.lat,
           lng: coords?.lng,
+          apiKey: (import.meta as any).env?.VITE_WEATHER_API_KEY,
         }),
       });
 
@@ -594,7 +595,7 @@ export default function App() {
                       API 키가 설정된 경우 메인 기상 레이더를 OpenWeather API로 매핑 호출합니다.
                     </p>
                     <div className="text-[10px] text-sky-500/80 font-semibold bg-white/50 inline-block px-1.5 py-0.5 rounded border border-sky-200">
-                      변수: OPENWEATHERMAP_API_KEY
+                      변수: VITE_WEATHER_API_KEY
                     </div>
                   </div>
 
@@ -611,7 +612,7 @@ export default function App() {
                   <div className="space-y-1.5 p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
                     <h4 className="font-bold text-slate-800">설정은 어디서 하나요?</h4>
                     <p className="text-slate-500">
-                      AI Studio의 <strong>Settings &gt; Secrets (환경 변수)</strong> 탭을 클릭하신 후 <code>OPENWEATHERMAP_API_KEY</code>를 지정해 주실 수 있습니다.
+                      AI Studio의 <strong>Settings &gt; Secrets (환경 변수)</strong> 탭을 클릭하신 후 <code>VITE_WEATHER_API_KEY</code>를 지정해 주실 수 있습니다.
                     </p>
                   </div>
 

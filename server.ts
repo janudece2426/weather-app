@@ -30,10 +30,10 @@ app.get("/api/health", (req, res) => {
 
 // Weather API endpoint
 app.post("/api/weather", async (req: express.Request, res: express.Response) => {
-  const { city, lat, lng } = req.body;
+  const { city, lat, lng, apiKey } = req.body;
   const targetCity = city ? city.trim() : "Seoul";
   
-  const openWeatherKey = process.env.OPENWEATHERMAP_API_KEY;
+  const openWeatherKey = apiKey || process.env.VITE_WEATHER_API_KEY || process.env.OPENWEATHERMAP_API_KEY;
   let weatherData: any = null;
   let source: "OpenWeather" | "Gemini AI Search" | "Default Simulator" = "Default Simulator";
 
