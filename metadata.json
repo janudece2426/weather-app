@@ -1,0 +1,6 @@
+{
+  "name": "Weather App",
+  "description": "실시간 기온과 습도를 보여주는 깔끔한 디자인의 날씨 앱",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
