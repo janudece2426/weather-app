@@ -1,33 +1,3 @@
-Viewed original_code.txt:608-638
-Edited original_code.txt
-Viewed original_code.txt:1-638
-Edited original_code.txt
-
-`original_code.txt` 파일에 기입된 소스 코드를 분석하여 요구사항에 맞춰 성공적으로 수정을 완료했습니다. 
-
-### 🛠 주요 변경 및 개선 사항
-
-1. **[대한민국 전국 도시 확장]**
-   - 사용자가 한글로 검색어를 입력할 때 `"인천광역시"`, `"제주도"`, `"수원시"`, `"강남구"`, `"가평군"` 등 다양한 시·군·구·도 명칭을 입력하더라도 완벽하게 인식할 수 있도록 한글 도시명 정제 함수(`cleanKoreanCityName`)를 구현했습니다.
-   - 정제된 검색어를 바탕으로 OpenWeatherMap의 **Direct Geocoding API**를 호출할 때 `,KR` 접미사를 붙여 우선적으로 한국 영토 내의 도시로 검색하도록 제한하였으며, 만약 매핑에 실패하거나 영어 도시명이 입력된 경우에는 글로벌 스케일로 조회하도록 설계하여 높은 정확도와 안정성을 확보했습니다.
-   - 사용자가 "내 위치 조회"를 활성화하여 좌표(`lat`, `lng`)가 주어졌을 때는 **Reverse Geocoding API**를 추가 연동하여 해당 위치의 명확한 로컬 지명(예: 한글 행정구 명칭 등)을 찾아 화면에 동적으로 보여줍니다.
-
-2. **[실시간 데이터 연동 및 병렬 호출]**
-   - 가상의 정적 데이터나 모의 API 백엔드 호출 대신, 브라우저 환경에서 직접 OpenWeatherMap의 3가지 핵심 API(**실시간 날씨 API**, **5일/3시간 주간 예보 API**, **대기 오염 지수(AQI) API**)를 `Promise.all`을 사용하여 병렬로 고속 호출하도록 기능을 통합했습니다.
-   - 수집된 실제 실시간 기온, 체감 기온, 습도, 풍속, 미세먼지 수준(대기질) 및 주간 예보를 기존 컴포넌트 데이터 규격에 완벽히 맞추어 맵핑했습니다.
-   - 소스 코드 상단부 24번째 라인 부근에 `API_KEY`를 넣을 수 있는 구역을 주석과 함께 명시해 두었으며, 로컬 개발 및 클라우드 배포 환경 모두에서 유연하게 작동하도록 환경 변수(`VITE_WEATHER_API_KEY`) 감지 로직도 함께 구성하였습니다.
-   - 실시간 날씨 데이터 속성을 정밀 분석하여 적절하고 세련된 조언을 주는 프리미엄 기상 메시지 생성기(`generateAITip`)를 탑재하여 디자인의 디테일을 채웠습니다.
-
-3. **[디자인 및 UI 레이아웃 100% 유지]**
-   - Lucide 아이콘, Framer Motion 애니메이션 트랜지션, 글라스모피즘 스타일, 흐림/화창 등 기상 상태에 따라 변화하는 그라데이션 컬러 배경 및 폰트 레이아웃 등 **기존의 미려하고 깔끔한 디자인 UI 레이아웃과 컴포넌트 구조를 완벽하게 유지**했습니다.
-
----
-
-### 📄 수정이 완료된 전체 완성 코드
-
-아래는 즉시 복사하여 바로 사용하실 수 있는 전체 코드입니다. `d:\안티 작업 모음\Weather_App\original_code.txt` 파일에도 동일하게 저장되었습니다.
-
-```tsx
 import React, { useState, useEffect } from "react";
 import { 
   Search, 
@@ -55,7 +25,7 @@ import ForecastList from "./components/ForecastList";
 // 아래 API_KEY 변수에 발급받으신 OpenWeatherMap API 키를 입력해 주세요.
 // 환경 변수 VITE_WEATHER_API_KEY가 존재하면 해당 키를 우선 사용합니다.
 // ============================================================================
-const API_KEY = (import.meta as any).env?.VITE_WEATHER_API_KEY || "YOUR_OPENWEATHERMAP_API_KEY_HERE";
+const API_KEY = (import.meta as any).env?.VITE_WEATHER_API_KEY || "6a2c5270a0f5c5bd5fa4453b93041500";
 
 // 대한민국 도시명 정제 함수 (예: 인천광역시 -> 인천, 제주도 -> 제주, 가평군 -> 가평)
 const cleanKoreanCityName = (name: string): string => {
@@ -72,7 +42,7 @@ const cleanKoreanCityName = (name: string): string => {
 };
 
 // OpenWeatherMap 날씨 상태를 앱 내 상태 문자열로 변환하는 함수
-const mapOWMCondition = (main: string): string => {
+const mapOWMCondition = (main: string): "sunny" | "cloudy" | "rainy" | "snowy" | "stormy" | "windy" | "foggy" => {
   const m = main.toLowerCase();
   if (m === "clear") return "sunny";
   if (m === "clouds") return "cloudy";
@@ -305,10 +275,8 @@ export default function App() {
         const dateObj = new Date(item.dt * 1000);
         return {
           day: daysOfWeek[dateObj.getDay()],
-          date: `${dateObj.getMonth() + 1}.${dateObj.getDate()}`,
           temp: Math.round(item.main.temp),
-          tempMin: Math.round(item.main.temp_min),
-          tempMax: Math.round(item.main.temp_max),
+          humidity: item.main.humidity || 0,
           condition: mapOWMCondition(item.weather[0].main),
           conditionText: item.weather[0].description
         };
@@ -853,4 +821,3 @@ export default function App() {
     </div>
   );
 }
-```
